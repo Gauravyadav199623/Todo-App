@@ -11,7 +11,7 @@ const userList2=document.querySelector('#users2');
 
 window.addEventListener('DOMContentLoaded',()=>{
     axios
-        .get('https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice')
+        .get('https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice')
         .then((res)=>{
             console.log(res)
             userList.innerHTML='';
@@ -33,26 +33,31 @@ window.addEventListener('DOMContentLoaded',()=>{
                 li.append(done)
 
                 done.addEventListener('click',()=>{
-                    
-                    li.remove()
-                    userList2.appendChild(li2)
-
-                    // let updatedData = { name: e.target.username.value, email: e.target.email.value };
-
-            
+                    // First, make a POST request to add the task to the 'done' list
                     axios
-                    .delete(`https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice/${item._id}`)
+                    .post(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice`,item)
                     .then((res)=>{
                         console.log(res)
+                
+                        // Then, make a DELETE request to remove the task from the 'to-do' list
+                        axios
+                        .delete(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice/${item._id}`)
+                        .then((res)=>{
+                            console.log(res)
+                
+                            // Only remove the task from the 'to-do' list and add it to the 'done' list if both requests succeed
+                            li.remove()
+                            userList2.appendChild(li2)
+                        })
+                        .catch((err)=>{
+                            console.log(err)
+                        })
                     })
                     .catch((err)=>{
                         console.log(err)
                     })
-                    // let name=document.querySelector('#task');
-                    // let email=document.querySelector('#description');
-                    // task.value=item.task;
-                    // description.value=item.description
-                  })
+                })
+                
                 
                 
                 
@@ -67,7 +72,7 @@ window.addEventListener('DOMContentLoaded',()=>{
 
                 del.addEventListener('click', () => {
                     axios
-                    .delete(`https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice/${item._id}`)
+                    .delete(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice/${item._id}`)
                     .then((response) => {
                         console.log(response);
                         li.remove();
@@ -134,42 +139,54 @@ function onSubmit(e){
     e.target.description.value=''
 
     
+    
     done.addEventListener('click',()=>{
-        userList2.appendChild(li2)
-
-        li.remove()
-        // let updatedData = { name: e.target.username.value, email: e.target.email.value };
-
+        // First, make a POST request to add the task to the 'done' list
         axios
-        .delete(`https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice/${data.id}`)
+        .post(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice`,data)
         .then((res)=>{
             console.log(res)
+    
+            // Then, make a DELETE request to remove the task from the 'to-do' list
+            axios
+            .delete(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice/${data.id}`)
+            .then((res)=>{
+                console.log(res)
+    
+                // Only remove the task from the 'to-do' list and add it to the 'done' list if both requests succeed
+                li.remove()
+                userList2.appendChild(li2)
+            })
+            .catch((err)=>{
+                console.log(err)
+            })
         })
         .catch((err)=>{
             console.log(err)
         })
-        
-        // e.target.task.value=data.task;
-        // e.target.description.value=data.description
-      })
+    })
+    
+    
     
     del.addEventListener('click', () => {
         li.remove();
 
-        axios.delete(`https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice/${data.id}`)
+        axios.delete(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice/${data.id}`)
                 .then((response) => {
                     console.log(response);
+                    
                 })
                 .catch((err) => {
                     console.log(err);
-                });      
+                });
+              
        
       });
       
     
 
       axios
-        .post(`https://crudcrud.com/api/8d1f966f7e364388a2857180936ee286/practice`,data)
+        .post(`https://crudcrud.com/api/a53eebb7d4d64a3d82857aec2e225b8a/practice`,data)
         .then((res)=>{
             // li.setAttribute("data-id", res.data._id)
             data.id = res.data._id;
