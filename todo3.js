@@ -7,7 +7,7 @@ let id;
 async function displayOnScreen() {
     try {
         const res = await axios
-        .get('https://crudcrud.com/api/91a49c218c794218b7c47f70f98c5273/practice');
+        .get('https://crudcrud.com/api/0d7cfb22d1214809b315576288470a38/practice');
         console.log(res);
         userList.innerHTML = '';
         userList2.innerHTML = '';
@@ -16,25 +16,30 @@ async function displayOnScreen() {
             const li = document.createElement("li");
             li.appendChild(document.createTextNode(`Task to do: ${item.task}, Description: ${item.description}`));
             userList.appendChild(li);
+            li.dataset.id = item._id;
 
-            let donebtn = document.createElement('button');
-            donebtn.className = 'btn btn-outline-info btn-sm';
-            donebtn.appendChild(document.createTextNode('Done'));
-            li.append(donebtn);
 
-            var delbtn = document.createElement('button');
-            delbtn.className = 'btn btn-outline-danger btn-sm';
-            delbtn.appendChild(document.createTextNode("Delete"));
-            li.appendChild(delbtn);
-
-            delbtn.addEventListener('click', () => del(item._id, li));
-            donebtn.addEventListener('click',() => done(item, item._id));
-
+            if (!item.isDone) {
+                let donebtn = document.createElement('button');
+                donebtn.className = 'btn btn-outline-info btn-sm';
+                donebtn.appendChild(document.createTextNode('Done'));
+                li.append(donebtn);
+        
+                var delbtn = document.createElement('button');
+                delbtn.className = 'btn btn-outline-danger btn-sm';
+                delbtn.appendChild(document.createTextNode("Delete"));
+                li.appendChild(delbtn);
+        
+                delbtn.addEventListener('click', () => del(item._id, li));
+                donebtn.addEventListener('click',() => done(item, item._id));
+            }
+        
             if (item.isDone) {
                 userList2.appendChild(li);  // Append to 'Done' list
             } else {
                 userList.appendChild(li);  // Append to 'To-Do' list
             }
+            
         });
     } catch (err) {
         console.log(err);
@@ -60,7 +65,7 @@ async function onSubmit(e){
 
     try {
         const res = await axios
-        .post(`https://crudcrud.com/api/91a49c218c794218b7c47f70f98c5273/practice`,data);
+        .post(`https://crudcrud.com/api/0d7cfb22d1214809b315576288470a38/practice`,data);
         id = res.data._id;
         console.log(res);
         displayOnScreen();
@@ -72,13 +77,26 @@ async function onSubmit(e){
 
 async function done(item,id){
     //  data={...data,isDone:true};
+   let updatedItem={
+        task:item.task,
+        description:item.task,
+        isDone:true
+    }
     try {
         console.log(item)
         console.log(id)
 
         const res = await axios
-        .put(`https://crudcrud.com/api/91a49c218c794218b7c47f70f98c5273/practice/${id}`,{...item,isDone:true});
+        .put(`https://crudcrud.com/api/0d7cfb22d1214809b315576288470a38/practice/${id}`,updatedItem);
         console.log(res.data);
+
+         // Get the list item associated with this task
+         const li = document.querySelector(`li[data-id="${id}"]`);
+        
+         // Remove the buttons
+         const buttons = li.querySelectorAll('button');
+         buttons.forEach(button => button.remove());
+        
         displayOnScreen();
     } catch (err) {
         console.log(err);
@@ -90,7 +108,7 @@ async function del(id,li){
     
     try {
         const response = await axios
-        .delete(`https://crudcrud.com/api/91a49c218c794218b7c47f70f98c5273/practice/${id}`);
+        .delete(`https://crudcrud.com/api/0d7cfb22d1214809b315576288470a38/practice/${id}`);
         console.log(response);
     } catch (err) {
         console.log(err);
